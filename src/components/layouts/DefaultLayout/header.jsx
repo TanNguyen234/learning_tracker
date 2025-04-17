@@ -6,7 +6,7 @@ const { Header } = Layout;
 function HeaderComponent() {
     const location = useLocation();
     const path = {
-        '/dashboard': 'Tổng quan',
+        '/': 'Tổng quan',
         '/skill': 'Kỹ năng',
         '/logs': 'Lịch sử',
         '/stat': 'Thống kê'

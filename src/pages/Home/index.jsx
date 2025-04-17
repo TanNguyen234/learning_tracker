@@ -1,8 +1,9 @@
-
-function Home() {
+function Dashboard() {
     return <>
-        Home
+        <div>
+            Dashboard
+        </div>
     </>
 }
 
-export default Home;
+export default Dashboard;

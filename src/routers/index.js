@@ -1,6 +1,7 @@
 import DefaultLayout from "../components/layouts/DefaultLayout";
 
-import Home from "../pages/Home";
+import Dashboard from "../pages/Home";
+import Skill from "../pages/skill";
 
 export const routes = [
     {
@@ -9,7 +10,11 @@ export const routes = [
         children: [
             {
                 path: '/',
-                element: <Home />
+                element: <Dashboard />
+            },
+            {
+                path: 'skill',
+                element: <Skill />
             }
         ]
     }

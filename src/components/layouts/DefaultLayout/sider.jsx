@@ -1,8 +1,8 @@
 //Antd
-import { DashboardOutlined, FileProtectOutlined, PieChartOutlined, PlusOutlined } from '@ant-design/icons';
+import { DashboardOutlined, FileProtectOutlined, PieChartOutlined, PlusOutlined, SnippetsOutlined } from '@ant-design/icons';
 
 import { Layout } from 'antd';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 const { Sider } = Layout;
 
 
@@ -21,6 +21,10 @@ function SiderComponent() {
                     <span className='default-layout__sider--subtitle'>Tổng quan</span>
                 </Link>
                 <Link to="/skill" className={location.pathname === '/skill' ? active : noneactive}>
+                    <SnippetsOutlined />
+                    <span className='default-layout__sider--subtitle'>Kỹ năng</span>
+                </Link>
+                <Link to="/skill/add" className={location.pathname === '/skill/add' ? active : noneactive}>
                     <PlusOutlined />
                     <span className='default-layout__sider--subtitle'>Thêm kĩ năng</span>
                 </Link>

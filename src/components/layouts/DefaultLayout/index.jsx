@@ -21,6 +21,7 @@ const DefaultLayout = () => (
             padding: 24,
             margin: 0,
             minHeight: 280,
+            background: "#F4F4F4"
           }}>
           <Outlet/>
         </Content>
