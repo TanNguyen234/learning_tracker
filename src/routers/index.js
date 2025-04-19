@@ -2,6 +2,7 @@ import DefaultLayout from "../components/layouts/DefaultLayout";
 
 import Dashboard from "../pages/Home";
 import Skill from "../pages/skill";
+import AddSkill from "../pages/skill/addSkill";
 
 export const routes = [
     {
@@ -15,6 +16,10 @@ export const routes = [
             {
                 path: 'skill',
                 element: <Skill />
+            },
+            {
+                path: 'skill/add',
+                element: <AddSkill />
             }
         ]
     }

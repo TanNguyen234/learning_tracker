@@ -1,21 +1,25 @@
-    import { Col, Row } from "antd";
-    import CardComponent from "../../components/Card";
+import { Row, Col } from "antd";
+import CardComponent from "../../components/Card/index";
 
-    function Skill() {
-    
-        return (<>
-            <Row gutter={[16, 16]} style={{ display: 'flex' , flexWrap: 'wrap'}}>
-                <Col xs={24} sm={12} md={8} lg={6} xl={4}>
-                    <CardComponent state={"Done"} title={"React"}/>
-                </Col>
-                <Col xs={24} sm={12} md={8} lg={6} xl={4}>
-                    <CardComponent state={"Learning"} title={"FastAPI"}/>
-                </Col>
-                <Col xs={24} sm={12} md={8} lg={6} xl={4}>
-                    <CardComponent state={"Planned"} title={"ReduxToolkit"}/>
-                </Col>
-            </Row>
-        </>)
-    }
+function Skill() {
+  const data = [
+    { id: 1, state: "Done", title: "React" },
+    { id: 2, state: "Learning", title: "FastAPI" },
+    { id: 3, state: "Planned", title: "ReduxToolkit" },
+    { id: 4, state: "Planned", title: "MongoDB" },
+  ];
 
-    export default Skill;
+  return (
+    <div style={{ padding: 16 }}>
+      <Row gutter={[16, 16]}>
+        {data.map((item) => (
+          <Col key={item.id} xs={24} sm={12} md={8} lg={6}>
+            <CardComponent id={item.id} state={item.state} title={item.title} />
+          </Col>
+        ))}
+      </Row>
+    </div>
+  );
+}
+
+export default Skill;
