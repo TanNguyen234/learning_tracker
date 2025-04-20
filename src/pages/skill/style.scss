@@ -1,13 +1,7 @@
-.skill-list {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
 .ant-form {
-    max-width: 500px;
+    min-width: 400px;;
     padding: 10px !important;
+    height: 470px;
     background-color: #fff;
     border: 2px solid #5c5c5c;
     border-radius: 10px;

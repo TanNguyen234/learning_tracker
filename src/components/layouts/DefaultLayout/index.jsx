@@ -1,31 +1,62 @@
-import './style.scss';
+import "./style.scss";
 
 //Component
-import SiderComponent from './sider';
-import HeaderComponent from './header';
+import SiderComponent from "./sider";
+import HeaderComponent from "./header";
 
 //Package
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from "react-router-dom";
 
 //Antd
-import { Layout } from 'antd';
-const { Content } = Layout;
+import { Layout, Grid, Drawer } from "antd";
+import { useEffect, useState } from "react";
 
-const DefaultLayout = () => (
-  <Layout className='default-layout'>
-      <SiderComponent />
-      <Layout className='default-layout__inner'>
-        <HeaderComponent />
-        <Content className='default-layout__content' 
+const { Content } = Layout;
+const { useBreakpoint } = Grid;
+
+const DefaultLayout = () => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const screens = useBreakpoint();
+  const location = useLocation();
+
+  // 👇 Auto close Drawer khi route thay đổi
+  useEffect(() => {
+    if (!screens.md && drawerOpen) {
+      setDrawerOpen(false);
+    }
+  }, [location.pathname]);
+
+  return (
+    <Layout className="default-layout">
+      {screens.md && <SiderComponent />}
+
+      {!screens.md && (
+        <Drawer
+          placement="left"
+          closable
+          onClose={() => setDrawerOpen(false)}
+          open={drawerOpen}
+          width={220}
+          bodyStyle={{ padding: 0 , background: '#fff'}}
+        >
+          <SiderComponent isDrawer />
+        </Drawer>
+      )}
+      <Layout className="default-layout__inner">
+        <HeaderComponent onOpenDrawer={() => setDrawerOpen(true)}/>
+        <Content
+          className="default-layout__content"
           style={{
             padding: 24,
             margin: 0,
             minHeight: 280,
-            background: "#F4F4F4"
-          }}>
-          <Outlet/>
+            background: "#F4F4F4",
+          }}
+        >
+          <Outlet />
         </Content>
       </Layout>
     </Layout>
-);
+  );
+};
 export default DefaultLayout;

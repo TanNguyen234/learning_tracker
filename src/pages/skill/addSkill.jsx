@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import './style.scss'
 import { Button, Form, Input, message, Select, Space } from 'antd';
 
@@ -10,6 +11,12 @@ function AddSkill() {
     };
     const onFinishFailed = () => {
         message.error('Thêm kỹ năng mới thất bại!');
+    };
+    
+    const navigate = useNavigate();
+
+    const handleBack = () => {
+      navigate(-1); // quay lại 1 trang trước
     };
     return (
         <Form
@@ -24,7 +31,7 @@ function AddSkill() {
           <Form.Item
             name="title"
             label="Tiêu đề:"
-            rules={[{ required: true }, { type: 'text', warningOnly: true }, { type: 'string', min: 1 }]}
+            rules={[{ required: true , message: 'Vui lòng nhập tiêu đề'}, { type: 'text', warningOnly: true }, { type: 'string', min: 1 }]}
           >
             <Input type='text' placeholder="Nhập tên kĩ năng" />
           </Form.Item>
@@ -50,7 +57,8 @@ function AddSkill() {
           </Form.Item>
           <Form.Item style={{textAlign: 'center'}}>
             <Space>
-              <Button size="large" type="primary" htmlType="submit">
+              <Button onClick={handleBack}>Quay lại</Button>
+              <Button size="medium" type="primary" htmlType="submit">
                 Thêm
               </Button>
             </Space>
