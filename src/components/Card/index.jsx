@@ -17,15 +17,15 @@ function CardComponent(props) {
       style={{ width: "100%" }}
     >
       <Space>
-        <Link to={"/detail/" + id}>
+        <Link to={"/skill/detail/" + id}>
           <Button type="default">Xem</Button>
         </Link>
-        <Link to={"/update/" + id}>
+        <Link to={"/skill/update/" + id}>
           <Button type="primary" danger>
             Sửa
           </Button>
         </Link>
-        <Link to={"/delete/" + id}>
+        <Link to={"/skill/delete/" + id}>
           <Button danger>Xóa</Button>
         </Link>
       </Space>

@@ -13,7 +13,7 @@ function Skill() {
     <div style={{ padding: 16 }}>
       <Row gutter={[16, 16]}>
         {data.map((item) => (
-          <Col key={item.id} xs={24} sm={12} md={11} lg={8}>
+          <Col key={item.id} xs={24} sm={12} md={11} lg={8} xl={6}>
             <CardComponent id={item.id} state={item.state} title={item.title} />
           </Col>
         ))}
