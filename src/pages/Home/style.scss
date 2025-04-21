@@ -1,0 +1,35 @@
+.dashboard {
+    padding: 24px;
+  
+    h2 {
+      margin-bottom: 24px;
+      font-size: 26px;
+      font-weight: 600;
+      color: #1f1f1f;
+    }
+  
+    &__card {
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  
+      .ant-statistic-title {
+        font-size: 16px;
+        color: #777;
+      }
+  
+      .ant-statistic-content {
+        font-size: 24px;
+        font-weight: 600;
+        color: #2c2c2c;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+  
+      svg {
+        font-size: 22px;
+        color: #1677ff;
+      }
+    }
+  }
+  
