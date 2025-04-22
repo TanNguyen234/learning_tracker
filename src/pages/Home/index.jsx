@@ -5,7 +5,7 @@ import {
   CheckCircleOutlined,
   FundProjectionScreenOutlined,
 } from "@ant-design/icons";
-
+import { Column, Pie } from "@ant-design/plots";
 import "./style.scss";
 
 const { Title } = Typography;
@@ -15,15 +15,71 @@ function DashboardPage() {
     totalHours: 0,
     totalSkills: 0,
     totalLogs: 0,
+    chartData: [],
+    skillPieData: [],
   });
 
-//   useEffect(() => {
-//     const fetchStats = async () => {
-//       const res = await getDashboardStats();
-//       setStats(res.data);
-//     };
-//     fetchStats();
-//   }, []);
+  useEffect(() => {
+    const fetchStats = async () => {
+      setStats({
+        totalHours: 7.0,
+        totalSkills: 3,
+        totalLogs: 4,
+        chartData: [
+          { date: "2025-04-18", hours: 2 },
+          { date: "2025-04-19", hours: 3.5 },
+          { date: "2025-04-20", hours: 1.5 },
+        ],
+        skillPieData: [
+          { type: "HTML", value: 240 },
+          { type: "JavaScript", value: 90 },
+          { type: "React", value: 90 },
+        ],
+      });
+    };
+    fetchStats();
+  }, []);
+
+  const columnConfig = {
+    data: stats.chartData,
+    xField: "date",
+    yField: "hours",
+    label: {
+      position: "top",
+      style: {
+        fill: "#595959",
+        opacity: 0.6,
+      },
+    },
+    xAxis: {
+      label: {
+        autoHide: true,
+        autoRotate: false,
+      },
+    },
+    meta: {
+      date: { alias: "Ngày" },
+      hours: { alias: "Giờ học" },
+    },
+  };
+
+  const pieConfig = {
+    appendPadding: 10,
+    data: stats.skillPieData,
+    angleField: "value",
+    colorField: "type",
+    radius: 1,
+    innerRadius: 0.6,
+    height: 300,
+    label: {
+      type: "outer",
+      content: (data) => `${data.type}: ${data.percentage?.toFixed(1) ?? 0}%`,
+      style: {
+    fontSize: 14,
+  },
+    },
+    interactions: [{ type: "element-active" }],
+  };
 
   return (
     <div className="dashboard">
@@ -58,6 +114,23 @@ function DashboardPage() {
               value={stats.totalLogs}
               prefix={<CheckCircleOutlined />}
             />
+          </Card>
+        </Col>
+      </Row>
+
+      <Row gutter={[24, 24]} style={{ marginTop: 32 }}>
+        <Col xs={24} lg={16}>
+          <Card title="Biểu đồ giờ học theo ngày" className="dashboard__card">
+            <Column {...columnConfig} height={300} />
+          </Card>
+        </Col>
+
+        <Col xs={24} lg={8}>
+          <Card
+            title="Tỉ lệ thời gian theo kỹ năng"
+            className="dashboard__card"
+          >
+            <Pie {...pieConfig} height={300} />
           </Card>
         </Col>
       </Row>
