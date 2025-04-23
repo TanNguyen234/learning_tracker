@@ -1,0 +1,41 @@
+.auth {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 16px;
+    background: linear-gradient(to right, #e0ecff, #f9fcff);
+  
+    &__box {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      padding: 40px 32px;
+      border-radius: 12px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease-in-out;
+  
+      @media (max-width: 480px) {
+        padding: 28px 20px;
+        box-shadow: none;
+        border-radius: 8px;
+      }
+    }
+  
+    &__form {
+      .ant-form-item {
+        margin-bottom: 20px;
+      }
+    }
+  
+    &__switch {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
+  
+      a {
+        padding-left: 4px;
+      }
+    }
+  }
+  

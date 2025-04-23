@@ -31,9 +31,9 @@ function DashboardPage() {
           { date: "2025-04-20", hours: 1.5 },
         ],
         skillPieData: [
-          { type: "HTML", value: 240 },
-          { type: "JavaScript", value: 90 },
-          { type: "React", value: 90 },
+          { type: "HTML", value: 2 },
+          { type: "JavaScript", value: 3.5 },
+          { type: "React", value: 1 },
         ],
       });
     };
@@ -72,8 +72,7 @@ function DashboardPage() {
     innerRadius: 0.6,
     height: 300,
     label: {
-      type: "outer",
-      content: (data) => `${data.type}: ${data.percentage?.toFixed(1) ?? 0}%`,
+      text: "value",
       style: {
     fontSize: 14,
   },
