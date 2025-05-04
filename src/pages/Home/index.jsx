@@ -7,6 +7,7 @@ import {
 } from "@ant-design/icons";
 import { Column, Pie } from "@ant-design/plots";
 import "./style.scss";
+import { useSelector } from "react-redux";
 
 const { Title } = Typography;
 
@@ -18,27 +19,14 @@ function DashboardPage() {
     chartData: [],
     skillPieData: [],
   });
+  const data = useSelector((state) => state.stats);
 
   useEffect(() => {
     const fetchStats = async () => {
-      setStats({
-        totalHours: 7.0,
-        totalSkills: 3,
-        totalLogs: 4,
-        chartData: [
-          { date: "2025-04-18", hours: 2 },
-          { date: "2025-04-19", hours: 3.5 },
-          { date: "2025-04-20", hours: 1.5 },
-        ],
-        skillPieData: [
-          { type: "HTML", value: 2 },
-          { type: "JavaScript", value: 3.5 },
-          { type: "React", value: 1 },
-        ],
-      });
+      setStats(data);
     };
     fetchStats();
-  }, []);
+  }, [data]);
 
   const columnConfig = {
     data: stats.chartData,

@@ -1,22 +1,27 @@
 import { Row, Col } from "antd";
 import CardComponent from "../../components/Card/index";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 function Skill() {
-  const data = [
-    { id: 1, state: "Done", title: "React" },
-    { id: 2, state: "Learning", title: "FastAPI" },
-    { id: 3, state: "Planned", title: "ReduxToolkit" },
-    { id: 4, state: "Planned", title: "MongoDB" },
-  ];
+  const [data, setData] = useState([]);
+  const skills = useSelector((state) => state.skills);
+
+  const fetchApi = () => {
+    setData(skills)
+  }
+  useEffect(()=>{
+    fetchApi()
+  }, [skills])
 
   return (
     <div style={{ padding: 16 }}>
       <Row gutter={[16, 16]}>
-        {data.map((item) => (
+        {data.map(item => 
           <Col key={item.id} xs={24} sm={12} md={11} lg={8} xl={6}>
             <CardComponent id={item.id} state={item.state} title={item.title} />
           </Col>
-        ))}
+        )}
       </Row>
     </div>
   );

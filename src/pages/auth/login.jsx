@@ -1,14 +1,19 @@
 // LoginPage.jsx
 import { Button, Form, Input, Typography, message } from "antd";
 import { Link } from "react-router-dom";
+import { useDispatch } from 'react-redux'
 import "./style.scss";
+import { userSlice } from "./userSlice";
 
 const { Title } = Typography;
 
 function LoginPage() {
+  const dispatch = useDispatch();
+
   const handleLogin = (values) => {
     message.success("Đăng nhập thành công!");
     console.log("Login values:", values);
+    dispatch(userSlice.actions.login({...values, token: 'successfully'}))
   };
 
   return (
