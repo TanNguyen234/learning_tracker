@@ -6,6 +6,6 @@ export const loginApi = async (data) => {
 };
 
 export const authApi = async (token) => {
-    const res = await auth('/auth/', token);
+    const res = await auth('/auth', token);
     return res;
 };

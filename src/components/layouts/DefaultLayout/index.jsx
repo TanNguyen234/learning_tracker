@@ -5,11 +5,12 @@ import SiderComponent from "./sider";
 import HeaderComponent from "./header";
 
 //Package
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 //Antd
 import { Layout, Grid, Drawer } from "antd";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 const { Content } = Layout;
 const { useBreakpoint } = Grid;
@@ -18,6 +19,12 @@ const DefaultLayout = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const screens = useBreakpoint();
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const { token } = useSelector((state) => state.user);
+  if(!token) {
+    navigate('/login')
+  }
 
   // 👇 Auto close Drawer khi route thay đổi
   useEffect(() => {

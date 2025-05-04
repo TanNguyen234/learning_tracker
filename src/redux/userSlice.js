@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { loginApi } from "../services/auth";
+import { authApi, loginApi } from "../services/auth";
 
 export const loginUser = createAsyncThunk(
     "user/loginUser",
@@ -15,6 +15,20 @@ export const loginUser = createAsyncThunk(
     }
 );
 
+export const autoLoginUser = createAsyncThunk(
+  "user/autoLoginUser",
+  async (credentials, thunkAPI) => {
+    try {
+      const data = await authApi(credentials);
+      if(data.code !== 200) throw new Error("Đăng nhập thất bại!");
+      
+      return data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
 const initialState = {
   username: "",
   email: "",
@@ -27,6 +41,9 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    auth: (state, action) => {
+
+    },
     logout: (state) => {
       state.username = "";
       state.email = "";
@@ -50,7 +67,7 @@ export const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload || "Login failed";
       });
-  },
+  }
 });
 
 export const { logout } = userSlice.actions;
