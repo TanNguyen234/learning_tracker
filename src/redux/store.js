@@ -1,8 +1,8 @@
 import {configureStore} from '@reduxjs/toolkit';
-import { userSlice } from '../pages/auth/userSlice';
-import { statSlice } from '../pages/Home/statsSlice';
-import { skillSlice } from '../pages/skill/skillsSlice';
-import { logSlice } from '../pages/logs/logsSlice';
+import { userSlice } from './userSlice';
+import { statSlice } from './statsSlice';
+import { skillSlice } from './skillsSlice';
+import { logSlice } from './logsSlice';
 
 const store = configureStore({
     reducer: {

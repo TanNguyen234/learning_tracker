@@ -1,19 +1,28 @@
-// LoginPage.jsx
 import { Button, Form, Input, Typography, message } from "antd";
 import { Link } from "react-router-dom";
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux';
 import "./style.scss";
-import { userSlice } from "./userSlice";
+import { loginUser } from "../../redux/userSlice";
 
 const { Title } = Typography;
 
 function LoginPage() {
   const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.user);
 
-  const handleLogin = (values) => {
-    message.success("Đăng nhập thành công!");
-    console.log("Login values:", values);
-    dispatch(userSlice.actions.login({...values, token: 'successfully'}))
+  const handleLogin = async (values) => {
+    try {
+      const resultAction = await dispatch(loginUser(values));
+
+      //  Kiểm tra nếu thành công
+      if (loginUser.fulfilled.match(resultAction)) {
+        message.success("Đăng nhập thành công!");
+      } else {
+        message.error(resultAction.payload || "Đăng nhập thất bại");
+      }
+    } catch (err) {
+      message.error("Lỗi không xác định");
+    }
   };
 
   return (
@@ -39,7 +48,7 @@ function LoginPage() {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
+            <Button type="primary" htmlType="submit" block loading={loading}>
               Đăng nhập
             </Button>
           </Form.Item>
