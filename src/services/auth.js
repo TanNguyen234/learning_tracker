@@ -1,11 +1,16 @@
 import { auth, post } from "../utils/request";
 
-export const loginApi = async (data) => {
-    const res = await post('/auth/login', data, );
+export const loginForAccess = async (data) => {
+    const res = await post('/auth/token', data);
     return res;
 };
 
-export const authApi = async (token) => {
-    const res = await auth('/auth', token);
+export const loginInfoUser = async (token) => {
+    const res = await auth('/user', token);
+    return res;
+};
+
+export const loginForRefresh = async (data) => {
+    const res = await post('/auth/refresh', data);
     return res;
 };

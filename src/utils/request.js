@@ -19,15 +19,19 @@ export const get = async (path) => {
 export const post = async (path, options, token) => {
     const headerParam = {
         accept: "application/json",
-        "content-type": "application/json"
+        'Content-Type': 'application/x-www-form-urlencoded'
     }
+    const formData = new URLSearchParams();
+    formData.append('username', options.username);
+    formData.append('password', options.password);
+
     if (token) {
         headerParam.Authorization = `Bearer ${token}`
     }
     const response = await fetch(API_DOMAIN + path, {
         method: "POST",
         headers: headerParam,
-        body: JSON.stringify(options)
+        body: formData
     })
     const result = await response.json();
     return result;

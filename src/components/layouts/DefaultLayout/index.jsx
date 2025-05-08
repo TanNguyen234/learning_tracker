@@ -21,8 +21,8 @@ const DefaultLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { token } = useSelector((state) => state.user);
-  if(!token) {
+  const { access_token } = useSelector((state) => state.user);
+  if(!access_token) {
     navigate('/login')
   }
 

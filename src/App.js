@@ -13,9 +13,10 @@ function App() {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const token = getCookie('token');
-    if(token) {
-      dispatch(autoLoginUser(token));
+    const refresh_token = getCookie('refresh_token');
+    if(refresh_token) {
+      console.log(refresh_token)
+      dispatch(autoLoginUser(refresh_token));
     }
   }, []);
   

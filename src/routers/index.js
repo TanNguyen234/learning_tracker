@@ -46,5 +46,5 @@ export const routes = [
     {
         path: "/register",
         element: <RegisterPage />
-    },
+    }
 ]
