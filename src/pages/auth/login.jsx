@@ -13,7 +13,10 @@ function LoginPage() {
 
   const handleLogin = async (values) => {
     try {
-      const resultAction = await dispatch(loginUser(values));
+      const formData = new URLSearchParams();
+      formData.append("username", values.username);
+      formData.append("password", values.password);
+      const resultAction = await dispatch(loginUser(formData));
       //  Kiểm tra nếu thành công
       if (loginUser.fulfilled.match(resultAction)) {
         navigate('/')

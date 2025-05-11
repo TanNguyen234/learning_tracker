@@ -29,14 +29,11 @@ export const authPost = async (path, token) => {
   return data;
 };
 
-export const post = async (path, options, token) => {
+export const post = async (path, formData, token = null) => {
   const headerParam = {
     accept: "application/json",
     "Content-Type": "application/x-www-form-urlencoded",
   };
-  const formData = new URLSearchParams();
-  formData.append("username", options.username);
-  formData.append("password", options.password);
 
   if (token) {
     headerParam.Authorization = `Bearer ${token}`;
@@ -49,6 +46,27 @@ export const post = async (path, options, token) => {
   const result = await response.json();
   return result;
 };
+
+export const postJson = async (path, data, token = null) => {
+    const headerParam = {
+      accept: "application/json",
+      "Content-Type": "application/json", // CHUYỂN sang application/json
+    };
+  
+    if (token) {
+      headerParam.Authorization = `Bearer ${token}`;
+    }
+  
+    const response = await fetch(API_DOMAIN + path, {
+      method: "POST",
+      headers: headerParam,
+      body: JSON.stringify(data), // stringify object JSON
+    });
+  
+    const result = await response.json();
+    return result;
+  };
+  
 
 export const del = async (path) => {
   const response = await fetch(API_DOMAIN + path, {

@@ -1,13 +1,47 @@
 import { Button, Form, Input, Typography, message } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./style.scss";
-
+import { postJson } from "../../utils/request";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../../redux/userSlice";
+import { useState } from "react";
 const { Title } = Typography;
 
 function RegisterPage() {
+  const dispatch = useDispatch();
+  const [registerLoading, setRegisterLoading] = useState(false);
+  const navigate = useNavigate();
+  const register = async (values) => {
+    setRegisterLoading(true)
+    const resultAction = await postJson("/auth/", values);
+    if (!resultAction ||!resultAction.email || !resultAction.username) message.error("Email hoặc username đã tồn tại!");
+    else {
+      message.success("Chúc mừng đã đăng ký thành công!");
+      const handleLogin = async (values) => {
+        try {
+          console.log(values)
+          const formData = new URLSearchParams();
+          formData.append("username", values.username);
+          formData.append("password", values.password);
+          console.log(formData)
+          const resultAction = await dispatch(loginUser(formData));
+          setRegisterLoading(false)
+          //  Kiểm tra nếu thành công
+          if (loginUser.fulfilled.match(resultAction)) {
+            navigate("/");
+            message.success("Đăng nhập thành công!");
+          } else {
+            message.error(resultAction.payload || "Đăng nhập thất bại");
+          }
+        } catch (err) {
+          message.error("Lỗi không xác định");
+        }
+      };
+      handleLogin(resultAction)
+    }
+  };
   const handleRegister = (values) => {
-    message.success("Đăng ký thành công!");
-    console.log("Register values:", values);
+    register(values);
   };
 
   return (
@@ -15,11 +49,17 @@ function RegisterPage() {
       <div className="auth__box">
         <Title level={2}>Đăng ký</Title>
 
-        <Form layout="vertical" onFinish={handleRegister} className="auth__form">
+        <Form
+          layout="vertical"
+          onFinish={handleRegister}
+          className="auth__form"
+        >
           <Form.Item
             label="Tên người dùng"
             name="username"
-            rules={[{ required: true, message: "Vui lòng nhập tên người dùng" }]}
+            rules={[
+              { required: true, message: "Vui lòng nhập tên người dùng" },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -41,7 +81,12 @@ function RegisterPage() {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              loading={registerLoading}
+            >
               Đăng ký
             </Button>
           </Form.Item>
