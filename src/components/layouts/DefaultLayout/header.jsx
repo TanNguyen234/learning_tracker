@@ -1,7 +1,9 @@
 //Antd
 import { MenuOutlined } from '@ant-design/icons';
 import { Button, Grid, Layout } from 'antd';
-import { Link, useLocation } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { logout } from '../../../redux/userSlice';
 const { Header } = Layout;
 
 const path = {
@@ -15,9 +17,17 @@ const { useBreakpoint } = Grid;
 
 function HeaderComponent({ onOpenDrawer }) {
     const location = useLocation();
+    const dispatch = useDispatch();
+    const navigate = useNavigate()
     const screens = useBreakpoint(); // 👈 lấy trạng thái responsive
+    const { access_token } = useSelector((state) => state.user);
+    const isLogin = access_token ? true : false;
 
-    const isLogin = true;
+
+    const handleClick = () => {
+        dispatch(logout());
+        navigate('/login')
+    }
 
     return <Header className='default-layout__header'>
         {/* Chỉ hiển thị menu icon khi có onOpenDrawer */}
@@ -30,9 +40,9 @@ function HeaderComponent({ onOpenDrawer }) {
             {location.pathname in path && path[location.pathname]}
         </div>
         <div className='default-layout__header--login'>
-            {isLogin ? <Link to="/">
+            {isLogin ? <Button onClick={() => handleClick()}>
                 Đăng xuất
-            </Link>: <>
+            </Button>: <>
                 <Link to="/login">
                     Đăng nhập
                 </Link>

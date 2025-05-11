@@ -1,27 +1,30 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { loginForAccess, loginForRefresh, loginInfoUser } from "../services/auth";
-import { setCookie } from "../helpers/cookie";
+import {
+  loginForAccess,
+  loginForRefresh,
+  loginInfoUser,
+} from "../services/auth";
+import { deleteAllCookie, setCookie } from "../helpers/cookie";
 
 export const loginUser = createAsyncThunk(
-    "user/loginUser",
-    async (credentials, thunkAPI) => {
-      try {
-        const data = await loginForAccess(credentials);
-        if(!data.access_token) throw new Error("Đăng nhập thất bại!");
-        console.log(data)
-        setCookie("access_token", data.access_token, 0.0208); // ví dụ set cookie 30 phút
-        setCookie("refresh_token", data.refresh_token, 30); // ví dụ set cookie 30 phút
+  "user/loginUser",
+  async (credentials, thunkAPI) => {
+    try {
+      const data = await loginForAccess(credentials);
+      if (!data.access_token) throw new Error("Đăng nhập thất bại!");
+      setCookie("access_token", data.access_token, 0.0208); // ví dụ set cookie 30 phút
+      setCookie("refresh_token", data.refresh_token, 30); // ví dụ set cookie 30 phút
 
-        const userData = await loginInfoUser(data.access_token);
-        if(!userData) throw new Error("Đăng nhập thất bại!");
-        return {
-          ...userData,
-          access_token: data.access_token
-        };
-      } catch (err) {
-        return thunkAPI.rejectWithValue(err.message);
-      }
+      const userData = await loginInfoUser(data.access_token);
+      if (!userData) throw new Error("Đăng nhập thất bại!");
+      return {
+        ...userData,
+        access_token: data.access_token,
+      };
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
     }
+  }
 );
 
 export const autoLoginUser = createAsyncThunk(
@@ -29,15 +32,14 @@ export const autoLoginUser = createAsyncThunk(
   async (credentials, thunkAPI) => {
     try {
       const data = await loginForRefresh(credentials);
-      console.log('auto', data)
-      if(!data) throw new Error("Đăng nhập thất bại!");
+      if (!data) throw new Error("Đăng nhập thất bại!");
       setCookie("access_token", data.access_token, 0.0208); // ví dụ set cookie 30 phút
       const userData = await loginInfoUser(data.access_token);
-        if(!userData) throw new Error("Đăng nhập thất bại!");
-        return {
-          ...userData,
-          access_token: data.access_token
-        };
+      if (!userData) throw new Error("Đăng nhập thất bại!");
+      return {
+        ...userData,
+        access_token: data.access_token,
+      };
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message);
     }
@@ -47,7 +49,7 @@ export const autoLoginUser = createAsyncThunk(
 const initialState = {
   username: "",
   email: "",
-  token: "",
+  access_token: "",
   loading: false,
   error: null,
 };
@@ -56,14 +58,13 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    auth: (state, action) => {
-
-    },
     logout: (state) => {
       state.username = "";
       state.email = "";
-      state.token = "";
+      state.access_token = "";
       state.error = null;
+
+      deleteAllCookie()
     },
   },
   extraReducers: (builder) => {
@@ -76,14 +77,27 @@ export const userSlice = createSlice({
         state.loading = false;
         state.username = action.payload.username;
         state.email = action.payload.email;
-        state.token = action.payload.token;
-        state.access_token = action.payload.access_token
+        state.access_token = action.payload.access_token;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Login failed";
+      })
+      .addCase(autoLoginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(autoLoginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.username = action.payload.username;
+        state.email = action.payload.email;
+        state.access_token = action.payload.access_token;
+      })
+      .addCase(autoLoginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Tự động đăng nhập thất bại";
       });
-  }
+  },
 });
 
 export const { logout } = userSlice.actions;

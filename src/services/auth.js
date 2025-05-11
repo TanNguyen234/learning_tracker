@@ -1,4 +1,4 @@
-import { auth, post } from "../utils/request";
+import { auth, authPost, post } from "../utils/request";
 
 export const loginForAccess = async (data) => {
     const res = await post('/auth/token', data);
@@ -11,6 +11,6 @@ export const loginInfoUser = async (token) => {
 };
 
 export const loginForRefresh = async (data) => {
-    const res = await post('/auth/refresh', data);
+    const res = await authPost('/auth/refresh', data);
     return res;
 };
