@@ -8,12 +8,11 @@ const statusColor = {
 };
 
 function CardComponent(props) {
-  const { id, title, state } = props;
-
+  const { id, title, status } = props;
   return (
     <Card
       title={title}
-      extra={<Tag color={statusColor[state] || "default"}>{state}</Tag>}
+      extra={<Tag color={statusColor[status] || "default"}>{status}</Tag>}
       style={{ width: "100%" }}
     >
       <Space>

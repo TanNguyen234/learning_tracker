@@ -1,14 +1,14 @@
-import { get } from "../utils/request"
+import { auth, get } from "../utils/request"
 
-export const getSkill = async () => {
-    const data = await get("/skills");
-    if(data.code !== 200) return null;
+export const getSkill = async (token) => {
+    const data = await auth("/skills", token);
+    if(!data) return null;
     return data
 }
 
-export const getSkillDetail = async (id) => {
+export const getSkillDetail = async (id, token) => {
     if(!id) return null;
-    const data = await get("/skill/"+id);
-    if(data.code !== 200) return null;
+    const data = await auth("/skills/" + id, token);
+    if(!data) return null;
     return data
 }

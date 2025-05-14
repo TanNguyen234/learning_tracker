@@ -47,6 +47,7 @@ export const autoLoginUser = createAsyncThunk(
 );
 
 const initialState = {
+  id: null,
   username: "",
   email: "",
   access_token: "",
@@ -59,6 +60,7 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
+      state.id = null;
       state.username = "";
       state.email = "";
       state.access_token = "";
@@ -75,6 +77,7 @@ export const userSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
+        state.id = action.payload.id;
         state.username = action.payload.username;
         state.email = action.payload.email;
         state.access_token = action.payload.access_token;
@@ -89,6 +92,7 @@ export const userSlice = createSlice({
       })
       .addCase(autoLoginUser.fulfilled, (state, action) => {
         state.loading = false;
+        state.id = action.payload.id;
         state.username = action.payload.username;
         state.email = action.payload.email;
         state.access_token = action.payload.access_token;
