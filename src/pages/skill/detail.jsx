@@ -7,6 +7,8 @@ import { useSelector } from "react-redux";
 import { getLogs } from "../../services/log";
 import Tracker from "./tracker";
 import NoteBox from "./note";
+import StudySchedule from "./studySchedule";
+import StudySummary from "./studySummary";
 
 const { Text, Paragraph } = Typography;
 
@@ -17,13 +19,12 @@ function SkillDetail() {
   const [logs, setLogs] = useState([]);
   const user = useSelector((state) => state.user);
   const logSlice = useSelector((state) => state.logs);
-  console.log(logSlice)
   const [isOpen, setIsOpen] = useState(false);
   const [note, setNote] = useState("");
 
   const handleSaveNote = (newNote) => {
-    setNote(newNote); // Lưu ghi chú vào state của SkillDetail
-    setIsOpen(false); // Đóng NoteBox sau khi lưu
+    setNote(newNote);
+    setIsOpen(false);
   };
 
   const handleBack = () => navigate(-1);
@@ -35,8 +36,10 @@ function SkillDetail() {
 
       const logForSkill = await getLogs(data.id, user.access_token);
       if (!logForSkill) return handleBack();
+
       setSkill(data);
-      setLogs(logForSkill);
+      // Đảm bảo logs luôn là mảng
+      setLogs(Array.isArray(logForSkill) ? logForSkill : []);
     } catch (error) {
       console.error("Lỗi khi fetch dữ liệu:", error);
       handleBack();
@@ -46,6 +49,52 @@ function SkillDetail() {
   useEffect(() => {
     fetchApi();
   }, [id, logSlice]);
+
+  const sessions = [
+    { name: "Sáng", icon: "🌅", start: 8, end: 10 },
+    { name: "Chiều", icon: "🌞", start: 14, end: 16 },
+    { name: "Tối", icon: "🌙", start: 20, end: 22 },
+  ];
+
+  const getSessionStatus = (session) => {
+    if (!Array.isArray(logs) || logs.length === 0) return "Planned";
+
+    const sessionLogs = logs.filter((log) => {
+      const logHour = new Date(log.start_time).getHours();
+      return logHour >= session.start && logHour < session.end;
+    });
+
+    if (sessionLogs.length === 0) return "Planned";
+    if (sessionLogs.some((log) => log.status === "Learning")) return "Learning";
+    if (sessionLogs.every((log) => log.status === "Done")) return "Done";
+
+    return "Learning";
+  };
+
+  const getTotalDurationToday = () => {
+    if (!Array.isArray(logs) || logs.length === 0) return 0;
+    const today = new Date();
+    const todayDate = today.toDateString();
+
+    return logs
+      .filter((log) => new Date(log.start_time).toDateString() === todayDate)
+      .reduce((total, log) => total + (log.duration || 0), 0);
+  };
+
+  const getProgressPercent = () => {
+    // Ở đây bạn dùng "Done" thay vì "completed" để thống nhất
+    const completedSessions = sessions.filter(
+      (session) => getSessionStatus(session) === "Done"
+    ).length;
+    return Math.round((completedSessions / sessions.length) * 100);
+  };
+
+  const totalLessons = skill?.totalLessons || 5;
+
+  // Đảm bảo logs là mảng trước khi filter
+  const completedLessons = Array.isArray(logs)
+    ? logs.filter((log) => log.status === "Done").length
+    : 0;
 
   return (
     <div className="study">
@@ -69,104 +118,64 @@ function SkillDetail() {
       <Button
         shape="circle"
         className="floating-button blob-btn"
-        onClick={() => setIsOpen(true)} // Mở NoteBox khi nhấn
+        onClick={() => setIsOpen(true)}
       >
-        <button class="blob-btn">
+        <button className="blob-btn">
           Ghi chú
-          <span class="blob-btn__inner">
-            <span class="blob-btn__blobs">
-              <span class="blob-btn__blob"></span>
-              <span class="blob-btn__blob"></span>
-              <span class="blob-btn__blob"></span>
-              <span class="blob-btn__blob"></span>
+          <span className="blob-btn__inner">
+            <span className="blob-btn__blobs">
+              <span className="blob-btn__blob"></span>
+              <span className="blob-btn__blob"></span>
+              <span className="blob-btn__blob"></span>
+              <span className="blob-btn__blob"></span>
             </span>
           </span>
         </button>
-        <br />
 
         <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
           <defs>
             <filter id="goo">
-              <feGaussianBlur
-                in="SourceGraphic"
-                result="blur"
-                stdDeviation="10"
-              ></feGaussianBlur>
+              <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10" />
               <feColorMatrix
                 in="blur"
                 mode="matrix"
                 values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 21 -7"
                 result="goo"
-              ></feColorMatrix>
-              <feBlend in2="goo" in="SourceGraphic" result="mix"></feBlend>
+              />
+              <feBlend in2="goo" in="SourceGraphic" result="mix" />
             </filter>
           </defs>
         </svg>
       </Button>
 
-      {/* NoteBox component */}
-      <NoteBox
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        onSaveNote={handleSaveNote}
-      />
+      <NoteBox isOpen={isOpen} onClose={() => setIsOpen(false)} onSaveNote={handleSaveNote} />
 
       <Tracker skill={skill} user={user} note={note} />
 
       {/* Tiến độ học và lịch sử học */}
-      <div className="study__progress">
-        <h3>Lịch học hôm nay</h3>
-        <ul className="study__sessions">
-          <li className="study__session">
-            <span>🌅</span>
-            <span>
-              Sáng (8:00 - 10:00): <strong>✔ Đã học</strong>
-            </span>
-          </li>
-          <li className="study__session">
-            <span>🌞</span>
-            <span>
-              Chiều (14:00 - 16:00): <strong>⏳ Đang học</strong>
-            </span>
-          </li>
-          <li className="study__session">
-            <span>🌙</span>
-            <span>
-              Tối (20:00 - 22:00): <strong>🕗 Chưa bắt đầu</strong>
-            </span>
-          </li>
-        </ul>
-      </div>
+      <StudySchedule sessions={sessions} getSessionStatus={getSessionStatus} />
 
-      <div className="study__summary">
-        <h3>📊 Tổng kết hôm nay</h3>
-        <ul>
-          <li>
-            🕒 Tổng thời gian học: <strong>1 giờ 30 phút</strong>
-          </li>
-          <li>
-            🚀 Tiến độ hoàn thành: <strong>60%</strong>
-          </li>
-          <li>
-            📚 Bài đã hoàn thành: <strong>3/5</strong>
-          </li>
-        </ul>
-      </div>
+      <StudySummary
+        totalDuration={getTotalDurationToday()}
+        progressPercent={getProgressPercent()}
+        completedLessons={completedLessons}
+        totalLessons={totalLessons}
+      />
 
       <div className="study__logs">
         <h3>Lịch sử học</h3>
-        {logs.length > 0 ? (
+        {Array.isArray(logs) && logs.length > 0 ? (
           <ul>
-            {logs.sort((a, b) => new Date(b.start_time) - new Date(a.start_time)).map((log, index) => (
-              <li key={index}>
-                📅 <strong>Ngày:</strong>{" "}
-                {new Date(log.start_time).toLocaleDateString()} –{" "}
-                <strong>Thời gian:</strong>{" "}
-                {new Date(log.start_time).toLocaleTimeString()} -{" "}
-                {new Date(log.end_time).toLocaleTimeString()} ({log.duration}{" "}
-                phút) – <strong>Ghi chú:</strong> {log.note}
-              </li>
-            ))}
+            {logs
+              .sort((a, b) => new Date(b.start_time) - new Date(a.start_time))
+              .map((log, index) => (
+                <li key={index}>
+                  📅 <strong>Ngày:</strong> {new Date(log.start_time).toLocaleDateString()} –{" "}
+                  <strong>Thời gian:</strong> {new Date(log.start_time).toLocaleTimeString()} -{" "}
+                  {new Date(log.end_time).toLocaleTimeString()} ({log.duration} phút) –{" "}
+                  <strong>Ghi chú:</strong> {log.note}
+                </li>
+              ))}
           </ul>
         ) : (
           <Text type="secondary">Chưa có lịch sử học nào.</Text>
