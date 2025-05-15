@@ -1,4 +1,4 @@
-import { auth, authPost, post } from "../utils/request"
+import { auth, post, postJson } from "../utils/request"
 
 export const getLogs = async (id, token) => {
     const data = await auth("/logs/" + id, token)
@@ -6,6 +6,6 @@ export const getLogs = async (id, token) => {
 }
 
 export const createLog = async (data, token) => {
-    const dataApi = await post("/logs/create", data, token);
+    const dataApi = await postJson("/logs/create", data, token);
     return dataApi
 }

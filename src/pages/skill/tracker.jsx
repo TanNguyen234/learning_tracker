@@ -1,11 +1,14 @@
-import { Button, Typography } from "antd";
+import { Button, Typography, message } from "antd";
 import { useEffect, useState } from "react";
-import { createLog } from "../../services/log";
+import { useDispatch } from "react-redux";
+import { postLog } from "../../redux/logsSlice";
+import { useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
 
-function Tracker(probs) {
-  const { skill, user } = probs;
+function Tracker({ skill, user, note }) {
+  const dispatch = useDispatch();
+
   const [isStudying, setIsStudying] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [startTime, setStartTime] = useState(null);
@@ -34,21 +37,34 @@ function Tracker(probs) {
   const handleCreateLog = async () => {
     const end = new Date();
     setIsStudying(false);
-    if (!startTime) return;
+
+    if (!startTime || !user?.access_token) {
+      message.error("Không thể tạo log: Thiếu thời gian bắt đầu hoặc token.");
+      return;
+    }
 
     const durationInMinutes = Math.floor((end - startTime) / 60000); // convert ms to minutes
-    try {
-      const logData = {
-        skill_id: skill.id,
-        start_time: startTime.toISOString(),
-        end_time: end.toISOString(),
-        duration: durationInMinutes,
-        note: "Chưa làm",
-      };
-      console.log(logData)
+    const logData = {
+      skill_id: skill.id,
+      start_time: startTime.toISOString(),
+      end_time: end.toISOString(),
+      duration: durationInMinutes,
+      note: note,
+    };
 
-      // const newLog = await createLog(logData, user.access_token)
+    try {
+      const resultAction = await dispatch(
+        postLog({ logData, access_token: user.access_token })
+      );
+
+      if (postLog.fulfilled.match(resultAction)) {
+        message.success("Ghi nhận thời gian học thành công!");
+      } else {
+        message.error(resultAction.payload || "Ghi log thất bại.");
+      }
     } catch (error) {
+      console.error("Log creation error:", error);
+      message.error("Đã xảy ra lỗi khi gửi log.");
     } finally {
       setElapsedTime(0);
       setStartTime(null);
@@ -74,7 +90,7 @@ function Tracker(probs) {
         <Button
           danger
           style={{ marginLeft: 8 }}
-          onClick={() => handleCreateLog()}
+          onClick={handleCreateLog}
           disabled={!isStudying}
         >
           Dừng lại

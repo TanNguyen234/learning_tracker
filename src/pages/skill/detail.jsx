@@ -16,8 +16,10 @@ function SkillDetail() {
   const [skill, setSkill] = useState(null);
   const [logs, setLogs] = useState([]);
   const user = useSelector((state) => state.user);
+  const logSlice = useSelector((state) => state.logs);
+  console.log(logSlice)
   const [isOpen, setIsOpen] = useState(false);
-  const [note, setNote] = useState('');
+  const [note, setNote] = useState("");
 
   const handleSaveNote = (newNote) => {
     setNote(newNote); // Lưu ghi chú vào state của SkillDetail
@@ -43,7 +45,7 @@ function SkillDetail() {
 
   useEffect(() => {
     fetchApi();
-  }, [id]);
+  }, [id, logSlice]);
 
   return (
     <div className="study">
@@ -66,15 +68,50 @@ function SkillDetail() {
       {/* Nút nổi mở ghi chú */}
       <Button
         shape="circle"
-        icon="📝"
-        className="floating-button"
+        className="floating-button blob-btn"
         onClick={() => setIsOpen(true)} // Mở NoteBox khi nhấn
-      />
+      >
+        <button class="blob-btn">
+          Ghi chú
+          <span class="blob-btn__inner">
+            <span class="blob-btn__blobs">
+              <span class="blob-btn__blob"></span>
+              <span class="blob-btn__blob"></span>
+              <span class="blob-btn__blob"></span>
+              <span class="blob-btn__blob"></span>
+            </span>
+          </span>
+        </button>
+        <br />
+
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+          <defs>
+            <filter id="goo">
+              <feGaussianBlur
+                in="SourceGraphic"
+                result="blur"
+                stdDeviation="10"
+              ></feGaussianBlur>
+              <feColorMatrix
+                in="blur"
+                mode="matrix"
+                values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 21 -7"
+                result="goo"
+              ></feColorMatrix>
+              <feBlend in2="goo" in="SourceGraphic" result="mix"></feBlend>
+            </filter>
+          </defs>
+        </svg>
+      </Button>
 
       {/* NoteBox component */}
-      <NoteBox isOpen={isOpen} onClose={() => setIsOpen(false)} onSaveNote={handleSaveNote} />
+      <NoteBox
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        onSaveNote={handleSaveNote}
+      />
 
-      <Tracker skill={skill} user={user} />
+      <Tracker skill={skill} user={user} note={note} />
 
       {/* Tiến độ học và lịch sử học */}
       <div className="study__progress">
@@ -120,7 +157,7 @@ function SkillDetail() {
         <h3>Lịch sử học</h3>
         {logs.length > 0 ? (
           <ul>
-            {logs.map((log, index) => (
+            {logs.sort((a, b) => new Date(b.start_time) - new Date(a.start_time)).map((log, index) => (
               <li key={index}>
                 📅 <strong>Ngày:</strong>{" "}
                 {new Date(log.start_time).toLocaleDateString()} –{" "}
