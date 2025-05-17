@@ -22,11 +22,11 @@ function Skill() {
   return (
     <div style={{ padding: 16 }}>
       <Row gutter={[16, 16]}>
-        {data.map(item => 
+        {data && data.length > 0 ? data.map(item => 
           <Col key={item.id} xs={24} sm={12} md={11} lg={8} xl={6}>
             <CardComponent id={item.id} status={item.status} title={item.title} />
           </Col>
-        )}
+        ) : <>Hiện chưa có bài học nào??</>}
       </Row>
     </div>
   );
