@@ -15,7 +15,6 @@ function AddSkill() {
       const resultAction = await dispatch(
         postSkill({ skillData, access_token: user.access_token })
       );
-      console.log(resultAction)
 
       if (postSkill.fulfilled.match(resultAction)) {
         message.success("Đã thêm 1 kỹ năng mới!");

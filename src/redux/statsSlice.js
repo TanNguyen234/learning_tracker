@@ -1,4 +1,17 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { getStat } from "../services/stat";
+
+export const getStatUser = createAsyncThunk(
+  "stats/get",
+  async (credentials, thunkAPI) => {
+    try {
+      const data = await getStat(credentials);
+      return data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
 
 export const statSlice = createSlice({
   name: "stats",
@@ -22,4 +35,19 @@ export const statSlice = createSlice({
       state = action.payload;
     },
   },
+    extraReducers: (builder) => {
+      builder
+        .addCase(getStatUser.pending, (state) => {
+          state.loading = true;
+          state.error = null;
+        })
+        .addCase(getStatUser.fulfilled, (state, action) => {
+          state.loading = false;
+          state = action.payload
+        })
+        .addCase(getStatUser.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload || "Something is wrong!";
+        });
+    }
 });

@@ -1,4 +1,4 @@
-import { Card, Col, Row, Statistic, Typography } from "antd";
+import { Card, Col, message, Row, Statistic, Typography } from "antd";
 import { useEffect, useState } from "react";
 import {
   ClockCircleOutlined,
@@ -7,7 +7,8 @@ import {
 } from "@ant-design/icons";
 import { Column, Pie } from "@ant-design/plots";
 import "./style.scss";
-import { useSelector } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
+import { getStatUser } from "../../redux/statsSlice";
 
 const { Title } = Typography;
 
@@ -19,17 +20,42 @@ function DashboardPage() {
     chartData: [],
     skillPieData: [],
   });
-  const data = useSelector((state) => state.stats);
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
+  const statRedux = useSelector((state) => state.stats);
+  const fetchApi = async () => {
+    try {
+      const resultAction = await dispatch(getStatUser(user.access_token));
+      console.log(resultAction);
 
+      if (getStatUser.fulfilled.match(resultAction)) {
+        message.success("Đã cập nhật thống kê thành công!");
+        setStats(resultAction.payload || statRedux);
+      } else {
+        message.error(resultAction.payload || "Ghi log thất bại.");
+      }
+    } catch (error) {
+      console.error("Log creation error:", error);
+      message.error("Đã xảy ra lỗi khi lấy thông kế từ server.");
+    }
+  };
   useEffect(() => {
-    const fetchStats = async () => {
-      setStats(data);
-    };
-    fetchStats();
-  }, [data]);
+    // const fetchStats = async () => {
+    //   setStats(data);
+    // };
+    // fetchStats();
+    fetchApi();
+  }, []);
 
   const columnConfig = {
-    data: stats.chartData,
+    data:
+      (stats.chartData || []).map((item) => ({
+        ...item,
+        date: new Date(item.date).toLocaleDateString("vi-VN", {
+          day: "2-digit",
+          month: "2-digit",
+        }),
+      })) || [],
     xField: "date",
     yField: "hours",
     label: {
@@ -53,7 +79,7 @@ function DashboardPage() {
 
   const pieConfig = {
     appendPadding: 10,
-    data: stats.skillPieData,
+    data: stats.skillPieData || [],
     angleField: "value",
     colorField: "type",
     radius: 1,
@@ -61,9 +87,11 @@ function DashboardPage() {
     height: 300,
     label: {
       text: "value",
+      labelHeight: 28,
       style: {
-    fontSize: 14,
-  },
+        fontSize: 14,
+      },
+      connector: true, // nối bằng đường kẻ rõ hơn
     },
     interactions: [{ type: "element-active" }],
   };
@@ -117,7 +145,10 @@ function DashboardPage() {
             title="Tỉ lệ thời gian theo kỹ năng"
             className="dashboard__card"
           >
-            <Pie {...pieConfig} height={300} />
+            <Pie
+              {...pieConfig}
+              style={{ width: "100%", maxWidth: "600px", margin: "0 auto" }}
+            />
           </Card>
         </Col>
       </Row>
