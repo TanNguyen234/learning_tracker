@@ -1,9 +1,14 @@
-import { auth, get, postJson } from "../utils/request"
+import { auth, postJson } from "../utils/request"
 
-export const getSkill = async (token) => {
-    const data = await auth("/skills", token);
-    if(!data) return null;
-    return data
+export const getSkill = async (token, current_page = 1, limit = 10) => {
+   try {
+        const res = await auth(`/skills/?current_page=${current_page}&limit=${limit}`, token);
+        if (!res || !res.data || !res.pagination) return null;
+        return res;
+    } catch (error) {
+        console.error('Error fetching skill data:', error);
+        return null;
+    }
 }
 
 export const getSkillDetail = async (id, token) => {
