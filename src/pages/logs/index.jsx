@@ -3,41 +3,55 @@ import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import "./style.scss";
 import { useSelector } from "react-redux";
+import { getAllLogs } from "../../services/log";
 
 const { Title } = Typography;
 
 function LogsPage() {
   const [logs, setLogs] = useState([]);
   const data = useSelector((state) => state.logs);
+  const skills = useSelector((state) => state.skills) || [];
+  const user = useSelector((state) => state.user);
+  console.log(skills);
+
+  const fetchApi = async () => {
+    try {
+      const data = await getAllLogs(user.access_token);
+      console.log(data);
+      setLogs(data || []);
+      return data || [];
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    // const fetchLogs = async () => {
-    //   const res = await getLogs();
-    //   setLogs(res.data);
-    // };
-    // fetchLogs();
-
-    // mock data
-    setLogs(data);
-  }, [data]);
+    fetchApi();
+  }, [user]);
 
   const columns = [
     {
-      title: "Kỹ năng",
-      dataIndex: "skill",
-      key: "skill",
-      render: (skill) => <Tag color="blue">{skill}</Tag>,
+      title: "ID kỹ năng",
+      dataIndex: "skill_id",
+      key: "skill_id",
+      render: (skillId) => <Tag color="magenta">#{skillId}</Tag>,
+    },
+    {
+      title: "Tên kỹ năng",
+      dataIndex: "skill_name",
+      key: "skill_name",
+      render: (name) => <Tag color="blue">{name || "Không rõ kỹ năng"}</Tag>,
     },
     {
       title: "Bắt đầu",
-      dataIndex: "start",
-      key: "start",
+      dataIndex: "start_time",
+      key: "start_time",
       render: (start) => dayjs(start).format("HH:mm DD/MM/YYYY"),
     },
     {
       title: "Kết thúc",
-      dataIndex: "end",
-      key: "end",
+      dataIndex: "end_time",
+      key: "end_time",
       render: (end) => dayjs(end).format("HH:mm DD/MM/YYYY"),
     },
     {
@@ -48,15 +62,15 @@ function LogsPage() {
   ];
 
   return (
-    <div className="logs">
+    <div className="logs" style={{ padding: 16, width: "100%" }}>
       <Title level={2}>Lịch sử học tập</Title>
 
-      {data.length === 0 ? (
+      {logs.length === 0 ? (
         <Empty description="Chưa có lịch sử học" />
       ) : (
         <Table
           columns={columns}
-          dataSource={logs.map((log) => ({ ...log, key: log.id }))}
+          dataSource={(logs || []).map((log) => ({ ...log, key: log.id }))}
           pagination={{ pageSize: 5 }}
           bordered
         />

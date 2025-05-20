@@ -1,6 +1,6 @@
 import { auth, postJson } from "../utils/request"
 
-export const getSkill = async (token, current_page = 1, limit = 10) => {
+export const getSkill = async (token, current_page = 1, limit) => {
    try {
         const res = await auth(`/skills/?current_page=${current_page}&limit=${limit}`, token);
         if (!res || !res.data || !res.pagination) return null;

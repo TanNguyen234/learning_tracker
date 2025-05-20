@@ -1,6 +1,7 @@
 export const API_DOMAIN = process.env.REACT_APP_PATH_API;
 
 export const auth = async (path, token) => {
+  console.log(path)
   const res = await fetch(API_DOMAIN + path, {
     method: "GET",
     headers: {

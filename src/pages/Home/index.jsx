@@ -7,7 +7,7 @@ import {
 } from "@ant-design/icons";
 import { Column, Pie } from "@ant-design/plots";
 import "./style.scss";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getStatUser } from "../../redux/statsSlice";
 
 const { Title } = Typography;
@@ -26,7 +26,6 @@ function DashboardPage() {
   const fetchApi = async () => {
     try {
       const resultAction = await dispatch(getStatUser(user.access_token));
-      console.log(resultAction);
 
       if (getStatUser.fulfilled.match(resultAction)) {
         message.success("Đã cập nhật thống kê thành công!");
@@ -40,12 +39,8 @@ function DashboardPage() {
     }
   };
   useEffect(() => {
-    // const fetchStats = async () => {
-    //   setStats(data);
-    // };
-    // fetchStats();
     fetchApi();
-  }, []);
+  }, [user]);
 
   const columnConfig = {
     data:
@@ -97,7 +92,7 @@ function DashboardPage() {
   };
 
   return (
-    <div className="dashboard">
+    <div className="dashboard" style={{ padding: 16, width: "100%" }}>
       <Title level={2}>Tổng quan học tập</Title>
 
       <Row gutter={[24, 24]}>

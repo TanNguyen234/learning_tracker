@@ -10,13 +10,13 @@ function Skill() {
   const [data, setData] = useState(skills);
   const [pagination, setPagination] = useState({
     current_page: 1,
-    limit: 10,
+    limit: 5,
     offset: 0,
     total_pages: 5,
     total_items: 10,
   });
 
-  const fetchApi = async (page = 1, limit = 10) => {
+  const fetchApi = async (page = 1, limit = 5) => {
     const accessToken = getCookie("access_token");
     const dataApi = await getSkill(accessToken, page, limit);
     if (dataApi) {
@@ -34,7 +34,7 @@ function Skill() {
   };
 
   return (
-    <div style={{ padding: 16 }}>
+    <div style={{ padding: 16, width: "100%" }}>
       <Row gutter={[16, 16]}>
         {data && data.length > 0 ? (
           data.map((item) => (
